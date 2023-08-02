@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <assert.h>
-#include <math.h> // for floor and log2
 #include "buddy_allocator.h"
 
 int levelIdx(int idx)
 {
-	return (int)floor(log2(idx));
+	return sizeof(int) * 8 - __builtin_clz(idx) - 1;
 }
 
 int parentIdx(int idx)
