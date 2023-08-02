@@ -1,38 +1,41 @@
-CC=gcc
-CCOPTS=--std=gnu99 -Wall -D_LIST_DEBUG_ 
-AR=ar
+CC := gcc
+CFLAGS := -c -Wall -Wextra -std=gnu99 -g -I$(SRCDIR) -DENABLE_LOGGING
+AR := ar
 
-OBJS=pool_allocator.o\
-     linked_list.o\
-     bit_map.o\
-     buddy_allocator.o
+SRCDIR := src
+TESTDIR := test
+OBJDIR := obj
 
-HEADERS=linked_list.h  pool_allocator.h bit_map.h buddy_allocator.h
+SOURCES := $(wildcard $(SRCDIR)/*.c)
+OBJS := $(patsubst $(SRCDIR)/%.c, $(OBJDIR)/%.o, $(SOURCES))
+HEADERS := $(wildcard $(SRCDIR)/*.h)
+TEST_SOURCES := $(wildcard $(TESTDIR)/*.c)
+TEST_OBJS := $(patsubst $(TESTDIR)/%.c, $(OBJDIR)/%.o, $(TEST_SOURCES))
 
-LIBS=libbuddy.a
+TARGET := $(OBJDIR)/main
+TEST_TARGETS := $(patsubst $(TESTDIR)/%.c, $(OBJDIR)/%, $(TEST_SOURCES))
+LIBS := $(OBJDIR)/libbuddy.a
+DEPS := $(filter-out $(OBJDIR)/main.o, $(OBJS))
 
-BINS=pool_allocator_test buddy_test buddy_allocator_test
+all: $(TARGET) $(LIBS)
 
-.phony: clean all
+$(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
+	$(CC) $(CFLAGS) $< -o $@ -lm
 
+$(OBJDIR)/%.o: $(TESTDIR)/%.c
+	$(CC) $(CFLAGS) $< -o $@ -lm
 
-all:	$(LIBS) $(BINS)
+$(TARGET): $(OBJDIR)/main.o $(LIBS)
+	$(CC) $^ -o $@ -lm
+	$(RM) $(TARGET).o 
 
-%.o:	%.c $(HEADERS)
-	$(CC) $(CCOPTS) -c -o $@  $<
+$(LIBS): $(DEPS)
+	$(AR) rcs $@ $^
 
-libbuddy.a: $(OBJS) 
-	$(AR) -rcs $@ $^
-	$(RM) $(OBJS)
+$(OBJDIR)/%: $(OBJDIR)/%.o $(DEPS)
+	$(CC) $^ -o $@ -lm
 
-pool_allocator_test: pool_allocator_test.o $(LIBS)
-	$(CC) $(CCOPTS) -o $@ $^ 
-
-buddy_test: buddy_test.o $(LIBS)
-	$(CC) $(CCOPTS) -o $@ $^ -lm
-
-buddy_allocator_test: buddy_allocator_test.o $(LIBS)
-	$(CC) $(CCOPTS) -o $@ $^ -lm
+test: $(TEST_TARGETS)
 
 clean:
-	rm -rf *.o *~ $(LIBS) $(BINS)
+	$(RM) $(OBJDIR)/*.o $(TARGET) $(TEST_TARGETS) $(LIBS)
