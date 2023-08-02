@@ -1,7 +1,8 @@
 #pragma once
 #include "bit_map.h"
 
-#define MAX_LEVELS 16
+#define UNAVAILABLE_BUDDY 0
+#define AVAILABLE_BUDDY 1
 
 typedef struct
 {

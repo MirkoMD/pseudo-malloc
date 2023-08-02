@@ -13,10 +13,11 @@ void BitMap_init(BitMap *bit_map, int num_bits, uint8_t *buffer)
 	bit_map->buffer = buffer;
 	bit_map->num_bits = num_bits;
 	bit_map->buffer_size = BitMap_getBytes(num_bits);
+	memset(bit_map->buffer, 0, bit_map->buffer_size);
 }
 
 // sets a the bit bit_num in the bitmap
-// status= 0 or 1
+// status = 0 or 1
 void BitMap_setBit(BitMap *bit_map, int bit_num, int status)
 {
 	// get byte
