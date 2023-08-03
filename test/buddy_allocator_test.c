@@ -18,7 +18,6 @@ void test_BuddyAllocator_get_minlevel(BuddyAllocator *alloc)
 		printf("Testing BuddyAllocator_get_min_level(), size = %d\n", size);
 		printf("Level: %d\n", BuddyAllocator_get_min_level(alloc, size));
 	}
-	printf(SEPARATOR);
 }
 int main()
 {
@@ -39,4 +38,13 @@ int main()
 	printf(SEPARATOR);
 
 	test_BuddyAllocator_get_minlevel(&alloc);
+	printf(SEPARATOR);
+
+	printf("Testing BuddyAllocator_get_buddy_size() with level = %d\n", 0);
+	printf("Size = %d\n", BuddyAllocator_get_buddy_size(&alloc, 0));
+	printf("Testing BuddyAllocator_get_buddy_size() with level = %d\n", (BUDDY_LEVELS - 1) / 2);
+	printf("Size = %d\n", BuddyAllocator_get_buddy_size(&alloc, (BUDDY_LEVELS - 1) / 2));
+	printf("Testing BuddyAllocator_get_buddy_size() with level = %d\n", BUDDY_LEVELS - 1);
+	printf("Size = %d\n", BuddyAllocator_get_buddy_size(&alloc, BUDDY_LEVELS - 1));
+	printf(SEPARATOR);
 }
