@@ -9,7 +9,17 @@
 #define MIN_BUCKET_SIZE (MEMORY_SIZE >> (BUDDY_LEVELS - 1))
 #define NUM_BUDDIES ((1 << BUDDY_LEVELS) - 1)
 #define BITSET_SIZE ((NUM_BUDDIES + 7) << 3)
+#define SEPARATOR "--------------------\n"
 
+void test_BuddyAllocator_get_minlevel(BuddyAllocator *alloc)
+{
+	for (int size = MIN_BUCKET_SIZE; size <= MEMORY_SIZE; size <<= 1)
+	{
+		printf("Testing BuddyAllocator_get_min_level(), size = %d\n", size);
+		printf("Level: %d\n", BuddyAllocator_get_min_level(alloc, size));
+	}
+	printf(SEPARATOR);
+}
 int main()
 {
 	char memory[MEMORY_SIZE];
@@ -26,12 +36,7 @@ int main()
 	printf("Min bucket size: %d\n", MIN_BUCKET_SIZE);
 	printf("Num buddies: %d\n", NUM_BUDDIES);
 	printf("Bitset size: %d\n", BITSET_SIZE);
-	printf("--------------------\n");
+	printf(SEPARATOR);
 
-	// Testing BuddyAllocator_get_min_level()
-	for (int size = MIN_BUCKET_SIZE; size <= MEMORY_SIZE; size <<= 1)
-	{
-		printf("Testing BuddyAllocator_get_min_level(), size = %d\n", size);
-		printf("Level: %d\n", BuddyAllocator_get_min_level(&alloc, size));
-	}
+	test_BuddyAllocator_get_minlevel(&alloc);
 }
