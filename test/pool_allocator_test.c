@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "pool_allocator.h"
+#include "../src/pool_allocator.h"
 
 // object size=4K
 #define item_size 4096
@@ -11,7 +11,7 @@
 #define buffer_size num_items *(item_size + sizeof(int))
 
 // we allocate buffer in .bss
-char buffer[buffer_size];
+char buff[buffer_size];
 
 PoolAllocator allocator;
 
@@ -21,7 +21,7 @@ int main(int argc, char **argv)
   PoolAllocatorResult init_result = PoolAllocator_init(&allocator,
                                                        item_size,
                                                        num_items,
-                                                       buffer,
+                                                       buff,
                                                        buffer_size);
   printf("%s\n", PoolAllocator_strerror(init_result));
 

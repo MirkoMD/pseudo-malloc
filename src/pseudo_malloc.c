@@ -17,7 +17,7 @@ BitMap bitmap;
 void pseudo_malloc_init()
 {
     BitMap_init(&bitmap, NUM_BUDDIES, buffer);
-    BitMap_setBit(&bitmap, 0, AVAILABLE_BUDDY);
+    BitMap_setBit(&bitmap, 0, BUDDY_FREE);
     BuddyAllocator_init(&alloc, &bitmap, memory, BUDDY_LEVELS, MIN_BUCKET_SIZE);
 }
 

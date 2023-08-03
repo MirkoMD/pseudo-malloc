@@ -1,5 +1,6 @@
 #include <assert.h>
 #include "bit_map.h"
+#include <string.h>
 
 // returns the number of bytes to store bits booleans
 int BitMap_getBytes(int bits)

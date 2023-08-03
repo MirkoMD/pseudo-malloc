@@ -1,8 +1,8 @@
 #pragma once
 #include "bit_map.h"
 
-#define UNAVAILABLE_BUDDY 0
-#define AVAILABLE_BUDDY 1
+#define BUDDY_USED 0
+#define BUDDY_FREE 1
 
 typedef struct
 {

@@ -1,35 +1,37 @@
-#include "buddy_allocator.h"
+#include "../src/pseudo_malloc.h"
+#include "../src/buddy_allocator.h"
+#include "../src/bit_map.h"
+#include <sys/mman.h>
 #include <stdio.h>
 
-#define BUFFER_SIZE 102400
 #define BUDDY_LEVELS 9
-#define MEMORY_SIZE (1024*1024)
-#define MIN_BUCKET_SIZE (MEMORY_SIZE>>(BUDDY_LEVELS))
+#define MEMORY_SIZE (1 << 20)
+#define MIN_BUCKET_SIZE (MEMORY_SIZE >> (BUDDY_LEVELS - 1))
+#define NUM_BUDDIES ((1 << BUDDY_LEVELS) - 1)
+#define BITSET_SIZE ((NUM_BUDDIES + 7) << 3)
 
-char buffer[BUFFER_SIZE]; // 100 Kb buffer to handle memory should be enough
-char memory[MEMORY_SIZE];
+int main()
+{
+	char memory[MEMORY_SIZE];
+	uint8_t buffer[BITSET_SIZE];
 
-BuddyAllocator alloc;
-int main(int argc, char** argv) {
+	BuddyAllocator alloc;
+	BitMap bitmap;
+	BitMap_init(&bitmap, NUM_BUDDIES, buffer);
+	BitMap_setBit(&bitmap, 0, BUDDY_FREE);
+	BuddyAllocator_init(&alloc, &bitmap, memory, BUDDY_LEVELS, MIN_BUCKET_SIZE);
 
-  //1 we see if we have enough memory for the buffers
-  int req_size=BuddyAllocator_calcSize(BUDDY_LEVELS);
-  printf("size requested for initialization: %d/BUFFER_SIZE\n", req_size);
+	printf("Buddy levels: %d\n", BUDDY_LEVELS);
+	printf("Memory size: %d\n", MEMORY_SIZE);
+	printf("Min bucket size: %d\n", MIN_BUCKET_SIZE);
+	printf("Num buddies: %d\n", NUM_BUDDIES);
+	printf("Bitset size: %d\n", BITSET_SIZE);
+	printf("--------------------\n");
 
-  //2 we initialize the allocator
-  printf("init... ");
-  BuddyAllocator_init(&alloc, BUDDY_LEVELS,
-                      buffer,
-                      BUFFER_SIZE,
-                      memory,
-                      MIN_BUCKET_SIZE);
-  printf("DONE\n");
-
-  void* p1=BuddyAllocator_malloc(&alloc, 100);
-  void* p2=BuddyAllocator_malloc(&alloc, 100);
-  void* p3=BuddyAllocator_malloc(&alloc, 100000);
-  BuddyAllocator_free(&alloc, p1);
-  BuddyAllocator_free(&alloc, p2);
-  BuddyAllocator_free(&alloc, p3);
-  
+	// Testing BuddyAllocator_get_min_level()
+	for (int size = MIN_BUCKET_SIZE; size <= MEMORY_SIZE; size <<= 1)
+	{
+		printf("Testing BuddyAllocator_get_min_level(), size = %d\n", size);
+		printf("Level: %d\n", BuddyAllocator_get_min_level(&alloc, size));
+	}
 }

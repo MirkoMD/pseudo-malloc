@@ -14,5 +14,5 @@ int main()
     printf("Allocated ptr: %p\n", ptr);
     pseudo_free(ptr, 1);
 
-    return 0;
+        return 0;
 }
