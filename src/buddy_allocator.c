@@ -79,6 +79,24 @@ int BuddyAllocator_get_free_buddy_idx(BuddyAllocator *alloc, int level)
 
 	// get index of first buddy at level
 	int idx = search_free_buddy_at_level(alloc->bitmap, level);
+	// buddy found at level level
+	if (idx != -1)
+	{
+		BitMap_setBit(alloc->bitmap, idx, BUDDY_USED);
+		return idx;
+	}
+
+	// look for parent buddy
+	int parent_idx = BuddyAllocator_get_free_buddy_idx(alloc, level - 1);
+	// no available buddy
+	if (parent_idx == -1)
+	{
+		return -1;
+	}
+
+	// split parent buddy, set the right one as free and return the left one
+	BitMap_setBit(alloc->bitmap, rightChildIdx(parent_idx), BUDDY_FREE);
+	return leftChildIdx(parent_idx);
 }
 
 void *BuddyAllocator_malloc(BuddyAllocator *alloc, int size)
