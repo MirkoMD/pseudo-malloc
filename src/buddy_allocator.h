@@ -20,3 +20,17 @@ void *BuddyAllocator_malloc(BuddyAllocator *alloc, int size);
 
 // releases allocated memory
 void BuddyAllocator_free(BuddyAllocator *alloc, void *mem);
+
+// auxiliary functions
+
+// returns the minimum level of the buddy, given size
+int BuddyAllocator_get_min_level(BuddyAllocator *alloc, int size);
+
+// returns the idx of the buddy at level level in the bitmap
+int search_free_buddy_at_level(BitMap *bitmap, int level);
+
+// returns the index of the first free buddy at level level
+int BuddyAllocator_get_free_buddy_idx(BuddyAllocator *alloc, int level);
+
+// returns the size of the buddy at level level
+int BuddyAllocator_get_buddy_size(BuddyAllocator *alloc, int level);

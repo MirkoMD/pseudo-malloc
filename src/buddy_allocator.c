@@ -47,13 +47,51 @@ int BuddyAllocator_get_min_level(BuddyAllocator *alloc, int size)
 int BuddyAllocator_get_buddy_size(BuddyAllocator *alloc, int level)
 {
 	return alloc->min_bucket_size << level;
-	return 0;
+}
+
+int search_free_buddy_at_level(BitMap *bitmap, int level)
+{
+	// get index of first buddy at level
+	int start = (1 << level) - 1;
+	// get index of last buddy at level
+	int end = (1 << (level + 1)) - 1;
+
+	for (int idx = start; idx <= end; idx++)
+	{
+		// check if buddy is free
+		if (BitMap_bit(bitmap, idx) == BUDDY_FREE)
+		{
+			// return index of buddy
+			return idx;
+		}
+	}
+	// no free buddy
+	return -1;
+}
+
+int BuddyAllocator_get_free_buddy_idx(BuddyAllocator *alloc, int level)
+{
+	// base case
+	if (level < 0)
+	{
+		return -1;
+	}
+
+	// get index of first buddy at level
+	int idx = search_free_buddy_at_level(alloc->bitmap, level);
 }
 
 void *BuddyAllocator_malloc(BuddyAllocator *alloc, int size)
 {
 	// get level for page with size bytes
 	int level = BuddyAllocator_get_min_level(alloc, size);
+	// find first available page
+	int buddy_idx = BuddyAllocator_get_free_buddy_idx(alloc, level);
+	if (buddy_idx == -1)
+	{
+		printf("No available memory\n");
+		return NULL;
+	}
 }
 
 void BuddyAllocator_free(BuddyAllocator *alloc, void *mem)
