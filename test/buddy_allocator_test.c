@@ -40,11 +40,26 @@ int main()
 	test_BuddyAllocator_get_minlevel(&alloc);
 	printf(SEPARATOR);
 
+	// test BuddyAllocator_get_buddy_size
 	printf("Testing BuddyAllocator_get_buddy_size() with level = %d\n", 0);
 	printf("Size = %d\n", BuddyAllocator_get_buddy_size(&alloc, 0));
 	printf("Testing BuddyAllocator_get_buddy_size() with level = %d\n", (BUDDY_LEVELS - 1) / 2);
 	printf("Size = %d\n", BuddyAllocator_get_buddy_size(&alloc, (BUDDY_LEVELS - 1) / 2));
 	printf("Testing BuddyAllocator_get_buddy_size() with level = %d\n", BUDDY_LEVELS - 1);
 	printf("Size = %d\n", BuddyAllocator_get_buddy_size(&alloc, BUDDY_LEVELS - 1));
+	printf(SEPARATOR);
+
+	// test BuddyAllocator_get_free_buddy_idx
+	printf("Testing BuddyAllocator_get_free_buddy_idx() with level = %d\n", 0);
+	printf("Free buddy idx = %d\n", BuddyAllocator_get_free_buddy_idx(&alloc, 0));
+	printf("Testing BuddyAllocator_get_free_buddy_idx() with level = %d\n", BUDDY_LEVELS - 1);
+	printf("Free buddy idx = %d\n", BuddyAllocator_get_free_buddy_idx(&alloc, BUDDY_LEVELS - 1));
+	printf(SEPARATOR);
+
+	// test search_free_buddy_at_level
+	printf("Testing search_free_buddy_at_level() with level = %d\n", 0);
+	printf("Free buddy idx = %d\n", search_free_buddy_at_level(&bitmap, 0));
+	printf("Testing search_free_buddy_at_level() with level = %d\n", BUDDY_LEVELS - 1);
+	printf("Free buddy idx  = %d\n", search_free_buddy_at_level(&bitmap, BUDDY_LEVELS - 1));
 	printf(SEPARATOR);
 }
