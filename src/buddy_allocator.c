@@ -46,7 +46,7 @@ int BuddyAllocator_get_min_level(BuddyAllocator *alloc, int size)
 
 int BuddyAllocator_get_buddy_size(BuddyAllocator *alloc, int level)
 {
-	return alloc->min_bucket_size << level;
+	return alloc->min_bucket_size * (1 << (alloc->num_levels - level - 1));
 }
 
 int search_free_buddy_at_level(BitMap *bitmap, int level)
