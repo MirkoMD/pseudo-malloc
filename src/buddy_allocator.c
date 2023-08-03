@@ -24,6 +24,10 @@ int rightChildIdx(int idx)
 
 void BuddyAllocator_init(BuddyAllocator *allocator, BitMap *bitmap, char *memory, int num_levels, int min_bucket_size)
 {
+	allocator->bitmap = bitmap;
+	allocator->memory = memory;
+	allocator->num_levels = num_levels;
+	allocator->min_bucket_size = min_bucket_size;
 }
 
 void *BuddyAllocator_malloc(BuddyAllocator *alloc, int size)
