@@ -20,20 +20,20 @@ DEPS := $(filter-out $(OBJDIR)/main.o, $(OBJS))
 all: $(TARGET) $(LIBS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
-	$(CC) $(CFLAGS) $< -o $@ -lm
+	$(CC) $(CFLAGS) $< -o $@
 
 $(OBJDIR)/%.o: $(TESTDIR)/%.c
-	$(CC) $(CFLAGS) $< -o $@ -lm
+	$(CC) $(CFLAGS) $< -o $@
 
 $(TARGET): $(OBJDIR)/main.o $(LIBS)
-	$(CC) $^ -o $@ -lm
+	$(CC) $^ -o $@
 	$(RM) $(TARGET).o 
 
 $(LIBS): $(DEPS)
 	$(AR) rcs $@ $^
 
 $(OBJDIR)/%: $(OBJDIR)/%.o $(DEPS)
-	$(CC) $^ -o $@ -lm
+	$(CC) $^ -o $@
 
 test: $(TEST_TARGETS)
 
