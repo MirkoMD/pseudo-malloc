@@ -8,11 +8,11 @@ int main()
     char *ptr = pseudo_malloc(1024);
     printf("Page size / 4: %u\n", getpagesize() / 4U);
     printf("Allocated ptr: %p\n", ptr);
-    pseudo_free(ptr, 1024);
+    pseudo_free(ptr);
 
     ptr = pseudo_malloc(1);
     printf("Allocated ptr: %p\n", ptr);
-    pseudo_free(ptr, 1);
+    pseudo_free(ptr);
 
-        return 0;
+    return 0;
 }

@@ -29,18 +29,21 @@ void *pseudo_malloc(size_t size)
     }
     else
     {
-        return mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        void *ptr = mmap(NULL, size + sizeof(int), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        *((int *)ptr) = size;
+        return ptr + sizeof(int);
     }
 }
 
-void pseudo_free(void *ptr, size_t size)
+void pseudo_free(void *ptr)
 {
-    if (size < (size_t)getpagesize() / 4U)
+    // check if ptr is in BuddyAllocator addresses pool
+    if (ptr >= (void *)memory && ptr < (void *)memory + MEMORY_SIZE * sizeof(char))
     {
         BuddyAllocator_free(&alloc, ptr);
     }
     else
     {
-        munmap(ptr, size);
+        munmap(ptr, *((int *)ptr));
     }
 }
