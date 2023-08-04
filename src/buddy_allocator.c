@@ -125,6 +125,37 @@ void *BuddyAllocator_malloc(BuddyAllocator *alloc, int size)
 	return (void *)(buddy_addr + 1);
 }
 
+void BuddyAllocator_free_buddy(BuddyAllocator *alloc, int idx)
+{
+	assert(idx >= 0 && idx < alloc->bitmap->num_bits);
+
+	BitMap_setBit(alloc->bitmap, idx, BUDDY_FREE);
+
+	int parent_idx, left_child_idx, right_child_idx;
+	while (idx != 0)
+	{
+		parent_idx = parentIdx(idx);
+		left_child_idx = leftChildIdx(parent_idx);
+		right_child_idx = rightChildIdx(parent_idx);
+
+		// if both children are free, merge them into parent
+		if (BitMap_bit(alloc->bitmap, left_child_idx) == BUDDY_FREE && BitMap_bit(alloc->bitmap, right_child_idx) == BUDDY_FREE)
+		{
+			BitMap_setBit(alloc->bitmap, parent_idx, BUDDY_FREE);
+			BitMap_setBit(alloc->bitmap, left_child_idx, BUDDY_USED);
+			BitMap_setBit(alloc->bitmap, right_child_idx, BUDDY_USED);
+		}
+		else // one of the children is used
+		{
+			break;
+		}
+		idx = parent_idx;
+	}
+}
+
 void BuddyAllocator_free(BuddyAllocator *alloc, void *mem)
 {
+	// get buddy index from memory
+	int buddy_idx = (*(int *)mem - 1);
+	BuddyAllocator_free_buddy(alloc, buddy_idx);
 }
