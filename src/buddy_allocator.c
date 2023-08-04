@@ -156,6 +156,6 @@ void BuddyAllocator_free_buddy(BuddyAllocator *alloc, int idx)
 void BuddyAllocator_free(BuddyAllocator *alloc, void *mem)
 {
 	// get buddy index from memory
-	int buddy_idx = (*(int *)mem - 1);
+	int buddy_idx = *((int *)mem - 1);
 	BuddyAllocator_free_buddy(alloc, buddy_idx);
 }
