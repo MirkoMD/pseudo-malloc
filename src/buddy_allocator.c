@@ -102,7 +102,7 @@ int BuddyAllocator_get_free_buddy_idx(BuddyAllocator *alloc, int level)
 void *BuddyAllocator_get_address(BuddyAllocator *alloc, int level, int idx)
 {
 	int idx_in_level = idx - ((1 << level) - 1);
-	int offset = (idx - ((1 << level) - 1)) * BuddyAllocator_get_buddy_size(alloc, level);
+	int offset = idx_in_level * BuddyAllocator_get_buddy_size(alloc, level);
 	return (void *)alloc->memory + offset;
 }
 
@@ -119,8 +119,10 @@ void *BuddyAllocator_malloc(BuddyAllocator *alloc, int size)
 		return NULL;
 	}
 
-	void *buddy_addr = BuddyAllocator_get_address(alloc, level, buddy_idx);
-	return buddy_addr;
+	int *buddy_addr = (int *)BuddyAllocator_get_address(alloc, level, buddy_idx);
+	// save buddy index in memory
+	*buddy_addr = buddy_idx;
+	return (void *)(buddy_addr + 1);
 }
 
 void BuddyAllocator_free(BuddyAllocator *alloc, void *mem)
