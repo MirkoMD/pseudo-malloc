@@ -57,7 +57,11 @@ void test_BuddyAllocator_malloc_free(BuddyAllocator *alloc)
 		{
 			printf("Testing BuddyAllocator_free(), size = %d\n", size);
 			BuddyAllocator_free(alloc, mem);
+			printf("Freed memory: %p\n", mem);
+			printf(SEPARATOR);
+			continue;
 		}
+		printf(SEPARATOR);
 	}
 }
 
@@ -92,5 +96,4 @@ int main()
 	// printf(SEPARATOR);1
 
 	test_BuddyAllocator_malloc_free(&alloc);
-	printf(SEPARATOR);
 }
