@@ -46,13 +46,18 @@ void test_search_free_buddy_at_level(BitMap *bitmap)
 	printf("Free buddy idx  = %d\n", search_free_buddy_at_level(bitmap, BUDDY_LEVELS - 1));
 }
 
-void test_BuddyAllocator_malloc(BuddyAllocator *alloc)
+void test_BuddyAllocator_malloc_free(BuddyAllocator *alloc)
 {
 	for (int size = 1; size <= MEMORY_SIZE; size <<= 1)
 	{
 		printf("Testing BuddyAllocator_malloc(), size = %d\n", size);
 		void *mem = BuddyAllocator_malloc(alloc, size);
 		printf("Allocated memory: %p\n", mem);
+		if (mem != NULL)
+		{
+			printf("Testing BuddyAllocator_free(), size = %d\n", size);
+			BuddyAllocator_free(alloc, mem);
+		}
 	}
 }
 
@@ -86,6 +91,6 @@ int main()
 	// test_search_free_buddy_at_level(&bitmap);
 	// printf(SEPARATOR);1
 
-	test_BuddyAllocator_malloc(&alloc);
+	test_BuddyAllocator_malloc_free(&alloc);
 	printf(SEPARATOR);
 }
