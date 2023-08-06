@@ -110,7 +110,6 @@ void *BuddyAllocator_malloc(BuddyAllocator *alloc, int size)
 {
 	// get level for page with size bytes
 	int level = BuddyAllocator_get_min_level(alloc, size + sizeof(int));
-	printf("level: %d\n", level);
 	// find first available page
 	int buddy_idx = BuddyAllocator_get_free_buddy_idx(alloc, level);
 	if (buddy_idx == -1)
