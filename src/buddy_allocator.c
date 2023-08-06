@@ -2,26 +2,31 @@
 #include <assert.h>
 #include "buddy_allocator.h"
 
+// returns the index of the level of the tree that contains the given index
 int levelIdx(int idx)
 {
 	return sizeof(int) * 8 - __builtin_clz(idx) - 1;
 }
 
+// returns the index of the parent of the node at the given index
 int parentIdx(int idx)
 {
 	return (idx - 1) / 2;
 }
 
+// returns the index of the left child of the node at the given index
 int leftChildIdx(int idx)
 {
 	return 2 * idx + 1;
 }
 
+// returns the index of the right child of the node at the given index
 int rightChildIdx(int idx)
 {
 	return 2 * idx + 2;
 }
 
+// initializes the buddy allocator
 void BuddyAllocator_init(BuddyAllocator *allocator, BitMap *bitmap, char *memory, int num_levels, int min_bucket_size)
 {
 	allocator->bitmap = bitmap;
@@ -30,6 +35,7 @@ void BuddyAllocator_init(BuddyAllocator *allocator, BitMap *bitmap, char *memory
 	allocator->min_bucket_size = min_bucket_size;
 }
 
+// returns the minimum level of the buddy allocator tree that can contain a block of the given size
 int BuddyAllocator_get_min_level(BuddyAllocator *alloc, int size)
 {
 	// calculate level for page
@@ -44,11 +50,13 @@ int BuddyAllocator_get_min_level(BuddyAllocator *alloc, int size)
 	return level;
 }
 
+// returns the size of a buddy at the given level
 int BuddyAllocator_get_buddy_size(BuddyAllocator *alloc, int level)
 {
 	return alloc->min_bucket_size * (1 << (alloc->num_levels - level - 1));
 }
 
+// returns the bitmap index of the first free buddy at the given level, -1 if not found
 int search_free_buddy_at_level(BitMap *bitmap, int level)
 {
 	// get index of first buddy at level
@@ -69,6 +77,7 @@ int search_free_buddy_at_level(BitMap *bitmap, int level)
 	return -1;
 }
 
+// returns the index of a free buddy starting from the given level, -1 if not found
 int BuddyAllocator_get_free_buddy_idx(BuddyAllocator *alloc, int level)
 {
 	// base case
@@ -99,6 +108,7 @@ int BuddyAllocator_get_free_buddy_idx(BuddyAllocator *alloc, int level)
 	return leftChildIdx(parent_idx);
 }
 
+// returns the address of the buddy at the given level and index
 void *BuddyAllocator_get_address(BuddyAllocator *alloc, int level, int idx)
 {
 	int idx_in_level = idx - ((1 << level) - 1);
@@ -106,6 +116,7 @@ void *BuddyAllocator_get_address(BuddyAllocator *alloc, int level, int idx)
 	return (void *)alloc->memory + offset;
 }
 
+// allocates a block of memory of the given size
 void *BuddyAllocator_malloc(BuddyAllocator *alloc, int size)
 {
 	// get level for page with size bytes
@@ -124,6 +135,7 @@ void *BuddyAllocator_malloc(BuddyAllocator *alloc, int size)
 	return (void *)(buddy_addr + 1);
 }
 
+// frees the buddy at the given index
 void BuddyAllocator_free_buddy(BuddyAllocator *alloc, int idx)
 {
 	assert(idx >= 0 && idx < alloc->bitmap->num_bits);
@@ -152,6 +164,7 @@ void BuddyAllocator_free_buddy(BuddyAllocator *alloc, int idx)
 	}
 }
 
+// frees the pointer
 void BuddyAllocator_free(BuddyAllocator *alloc, void *mem)
 {
 	// get buddy index from memory

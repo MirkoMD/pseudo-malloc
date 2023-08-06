@@ -8,6 +8,7 @@ uint8_t buffer[BITSET_SIZE];
 BuddyAllocator alloc;
 BitMap bitmap;
 
+// initializes structures needed by pseudo_malloc
 void pseudo_malloc_init()
 {
     BitMap_init(&bitmap, NUM_BUDDIES, buffer);
@@ -15,6 +16,7 @@ void pseudo_malloc_init()
     BuddyAllocator_init(&alloc, &bitmap, memory, BUDDY_LEVELS, MIN_BUCKET_SIZE);
 }
 
+// allocates memory of size size
 void *pseudo_malloc(size_t size)
 {
     if (size < (size_t)getpagesize() / 4U)
@@ -29,6 +31,7 @@ void *pseudo_malloc(size_t size)
     }
 }
 
+// frees memory pointed by ptr
 void pseudo_free(void *ptr)
 {
     // check if ptr is in BuddyAllocator addresses pool
